@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "daisyui": "^5.0.0-beta.1"
+  },
+  "dependencies": {
+    "@material/web": "^2.2.0",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "motion": "^11.17.0",
+    "rollup": "^4.30.1"
+  }
+}
