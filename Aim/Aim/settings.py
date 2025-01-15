@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import dj_database_url
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,11 +29,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
 "aim-to-do.onrender.com",
+"127.0.0.1",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://aim-to-do.onrender.com",
 ]
+
+PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/js', 'serviceworker.js')
 
 # Application definition
 
@@ -44,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'todo',
+    'pwa',
 ]
 
 MIDDLEWARE = [
@@ -133,3 +138,65 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+# Creates PWA manifest file
+PWA_APP_NAME = 'Aim ToDo'
+PWA_APP_DESCRIPTION = "Aim ToDo PWA"
+PWA_APP_THEME_COLOR = '#000000'
+PWA_APP_BACKGROUND_COLOR = '#ffffff'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_ORIENTATION = 'any'
+PWA_APP_START_URL = '/'
+PWA_APP_STATUS_BAR_COLOR = 'default'
+PWA_APP_ICONS = [
+	{
+		'src': 'static/images/logo.png',
+		'sizes': '48x48'
+	},
+    {
+		'src': 'static/images/logo.png',
+		'sizes': '72x72'
+	},
+    {
+		'src': 'static/images/logo.png',
+		'sizes': '192x192'
+	},
+    {
+		'src': 'static/images/logo.png',
+		'sizes': '512x512'
+	},
+]
+PWA_APP_ICONS_APPLE = [
+    {
+        'src': 'static/images/logo.png',
+        'sizes': '192x192'
+    },
+    {
+        'src': 'static/images/logo.png',
+        'sizes': '512x512'
+    },
+]
+PWA_APP_SPLASH_SCREEN = [
+	{
+		'src': 'static/images/logo.png',
+		'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
+	}
+]
+PWA_APP_SCREENSHOTS = [
+    {
+        'src': 'static/images/logo.png',
+        'sizes': '1920x1080',
+        'type': 'image/png',
+        'form_factor': 'wide'
+    },
+    {
+        'src': 'static/images/logo.png',
+        'sizes': '1080x1920',
+        'type': 'image/png'
+    }
+]
+PWA_APP_DIR = 'ltr'
+PWA_APP_LANG = 'en-US'

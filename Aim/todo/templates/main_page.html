@@ -2,12 +2,14 @@
 {% load static %}
 <html lang="en">
 <head>
+  {% load pwa %} 
+  {% progressive_web_app_meta %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your To Do</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/output.css' %}" type="text/css"> <!-- We add the output Tailwind CSS here -->
-    <script type="module" src="{% static 'css/bundle.js' %}"></script>
+    <script type="module" src="{% static 'js/bundle.js' %}"></script>
     {% comment %} <script type="module">
       import { animate, scroll } from "https://cdn.jsdelivr.net/npm/motion@latest/+esm"
 

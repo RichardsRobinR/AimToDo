@@ -1,0 +1,80 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/output.css' %}" type="text/css"> <!-- We add the output Tailwind CSS here -->
+    <script type="module" src="{% static 'js/bundle.js' %}"></script>
+    <script type="module" src="{% static 'js/x_ui.js' %}"></script>
+    <script type="module">
+        import { animate, scroll } from "https://cdn.jsdelivr.net/npm/motion@latest/+esm";
+
+        // Target elements
+        const progressBar = document.getElementById("progress-bar");
+        const progressText = document.getElementById("progress-text");
+        const weatherText = document.getElementById("weather-text");
+      
+        // Animate width of the progress bar
+        animate(0, {{completed_percentage}}, {
+            duration: 1, // Duration of animation in seconds
+            ease: "circOut",
+            onUpdate: (currentValue) => {
+
+             // Update the width of the progress bar
+            progressBar.style.width = `${currentValue}%`;
+
+            // Update the progress percentage text
+            progressText.textContent = `${Math.round(currentValue)}%`;
+             
+            },
+          });
+
+          animate(0, {{weather_cleaned_data.temperature}}, {
+            duration: 2, // Duration of animation in seconds
+            ease: "circOut",
+            onUpdate: (currentValue) => {
+
+            weatherText.textContent = `${Math.round(currentValue)}°`;
+             
+            },
+          });
+
+    </script>
+
+
+</head>
+<body class="bg-slate-950 flex items-center justify-around h-screen flex-col md:flex-row ">
+
+<h1 class="text-gray-300 text-9xl">Hi, Richie</h1>
+<div class="relative bg-[#fdfffd] rounded-2xl h-40 w-80 flex flex-col justify-between pb-3 pt-3 pr-2 pl-2">
+    <div id="progress-text" class="text-8xl font-semibold ">0</div>
+    <div class="relative w-full bg-gray-200 rounded-md h-8">
+      <div id="progress-bar" style="width: 0;" class="absolute flex items-center justify-end top-0 left-0 bg-black h-8 rounded-md" >
+        <div class=" bg-white rounded-lg w-1 h-5 mr-1" ></div>
+        </div>
+      </div>
+    </div>
+
+{% comment %} weather {% endcomment %}
+<div class="relative bg-[#c9e5ff] rounded-2xl h-40 w-80 flex flex-col justify-between pb-3 pt-3 pr-2 pl-2">
+    <div class="flex justify-between ">
+        <div class="flex flex-col justify-start">
+            <p class="text-lg">Weather</p>
+            <p class="text-sm text-slate-500">{{weather_cleaned_data.date}}</p>
+        </div>
+        
+        <p>{{weather_cleaned_data.location_name}}</p>
+    </div>
+
+    <div class="flex justify-between items-end">
+        <p>{{weather_cleaned_data.weather_description}}</p>
+        <p class="text-7xl font-semibold" id="weather-text">0 + "°C"</p>
+    </div>
+</div>
+
+<!--{{html|safe}}-->
+
+
+</body>
+</html>

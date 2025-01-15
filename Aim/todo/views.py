@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
+from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_protect
 
 from todo.forms import TodoListForm
 from todo.models import TodoList
+import  requests
+from datetime import date
 
 # Create your views here.
 def main_page(request):
@@ -30,7 +33,6 @@ def delete(request, id):
     todo.delete()
     return redirect('main_page')
 
-
 def update(request, id):
     todo = get_object_or_404(TodoList, pk=id)
     isCompleted = request.POST.get('isCompleted', False)
@@ -40,3 +42,99 @@ def update(request, id):
     todo.isCompleted = isCompleted
     todo.save()
     return redirect('main_page')
+
+
+def widgets_page(request):
+    # html = x_post()
+    completed_percentage = year_percentage()
+    weather_cleaned_data = weather()
+    data = {
+        # 'html': mark_safe(html),
+        'completed_percentage':completed_percentage,
+        'weather_cleaned_data' :weather_cleaned_data,
+    }
+    return  render(request,'widgets_page.html',data)
+    # return render(request,'widgets_page.html')
+
+
+def x_post():
+    url = "https://publish.twitter.com/oembed?url=https://x.com/RichardsRobin_R/status/1343813927465971712&&theme=dark&&hide_media=true&&hide_thread=true"
+    x_json = fetch_json_data(url)
+    html = x_json["html"]
+    return html
+
+
+
+def fetch_json_data(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        # Handle errors appropriately
+        return None
+
+def year_percentage():
+    current_date = date.today()
+    year = current_date.year
+    total_days = 366 if (year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)) else 365
+    days_passed = (current_date - date(year, 1, 1)).days + 1  # +1 to include today
+    percentage = days_passed / total_days * 100
+    return round(percentage)  # Rounded to no decimal places
+
+def weather():
+    # https: // api.openweathermap.org / data / 2.5 / weather?q = mysuru & appid = e853cd137996e5a3c2a1cad355747abd
+    api_key = "e853cd137996e5a3c2a1cad355747abd"
+    base_url = "https://api.openweathermap.org/data/2.5/weather"
+    city_name = "mysuru"
+
+    complete_url = base_url + "?q=" + city_name + "&appid=" + api_key
+
+    # Fri , April 04
+    response = requests.get(complete_url)
+    weather_json = response.json()
+    current_date = date.today().day
+    current_month = get_month()
+    current_weekday = get_weekday()
+
+    print(f"{current_weekday}, {current_month} {current_date}")
+
+    if weather_json["cod"] != "404":
+        weather_main_data = weather_json["main"]
+        temperature = int(weather_main_data["temp"] - 273.15)
+        pressure = weather_main_data["pressure"]
+        humidity = weather_main_data["humidity"]
+        weather_data = weather_json["weather"]
+        weather_description = weather_data[0]["description"]
+        location_name = weather_json["name"]
+
+        weather_cleaned_data = {
+            "temperature" : temperature,
+            "pressure" : pressure,
+            "humidity" : humidity,
+            "weather_description" : str(weather_description).capitalize(),
+            "location_name" : location_name,
+            "date" : f"{current_weekday}, {current_month} {current_date}"
+        }
+
+        return weather_cleaned_data
+
+        print(" Temperature (in kelvin unit) = " +
+              str(temperature) +
+              "\n atmospheric pressure (in hPa unit) = " +
+              str(pressure) +
+              "\n humidity (in percentage) = " +
+              str(humidity) +
+              "\n description = " +
+              str(weather_description))
+
+    else:
+        weather_cleaned_data = {}
+        return weather_cleaned_data
+
+def get_weekday():
+    weekdays = ["Mon","Tue","Wed","Thur","Fri","Sat","Sun"]
+    return weekdays[date.today().weekday()]
+
+def get_month():
+    month = ["Jan","Feb","March","April","May","June","July","Aug","Sept","Oct","Nov","Dec"]
+    return month[date.today().month]
