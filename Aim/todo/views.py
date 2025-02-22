@@ -48,10 +48,12 @@ def widgets_page(request):
     # html = x_post()
     completed_percentage = year_percentage()
     weather_cleaned_data = weather()
+    leetcode_cleaned_data = leetcode_graphql_api()
     data = {
         # 'html': mark_safe(html),
         'completed_percentage':completed_percentage,
         'weather_cleaned_data' :weather_cleaned_data,
+        'leetcode_cleaned_data' :leetcode_cleaned_data,
     }
     return  render(request,'widgets_page.html',data)
     # return render(request,'widgets_page.html')
@@ -138,3 +140,142 @@ def get_weekday():
 def get_month():
     month = ["Jan","Feb","March","April","May","June","July","Aug","Sept","Oct","Nov","Dec"]
     return month[date.today().month]
+
+
+
+def leetcode_graphql_api():
+    url = "https://leetcode.com/graphql"
+
+    query = """
+    query userPublicProfileAndRanking($username: String!) {
+      matchedUser(username: $username) {
+        contestBadge {
+          name
+          expired
+          hoverText
+          icon
+        }
+        username
+        githubUrl
+        twitterUrl
+        linkedinUrl
+        profile {
+          ranking
+          userAvatar
+          realName
+          aboutMe
+          school
+          websites
+          countryName
+          company
+          jobTitle
+          skillTags
+          postViewCount
+          postViewCountDiff
+          reputation
+          reputationDiff
+          solutionCount
+          solutionCountDiff
+          categoryDiscussCount
+          categoryDiscussCountDiff
+          certificationLevel
+        }
+        
+    tagProblemCounts {
+      advanced {
+        tagName
+        tagSlug
+        problemsSolved
+      }
+      intermediate {
+        tagName
+        tagSlug
+        problemsSolved
+      }
+      fundamental {
+        tagName
+        tagSlug
+        problemsSolved
+      }
+    }
+      }
+
+      userContestRanking(username: $username) {
+        attendedContestsCount
+        rating
+        globalRanking
+        totalParticipants
+        topPercentage
+        badge {
+          name
+        }
+      }
+
+      
+    }
+    """
+
+    query_two = """
+    query getUserProfile($username: String!) {
+    allQuestionsCount {
+      difficulty
+      count
+    }
+    matchedUser(username: $username) {
+      contributions {
+        points
+      }
+      profile {
+        reputation
+        ranking
+      }
+    }
+    recentSubmissionList(username: $username) {
+      title
+      titleSlug
+      timestamp
+      statusDisplay
+      lang
+      __typename
+    }
+    matchedUserStats: matchedUser(username: $username) {
+      submitStats: submitStatsGlobal {
+        acSubmissionNum {
+          difficulty
+          count
+          submissions
+          __typename
+        }
+        totalSubmissionNum {
+          difficulty
+          count
+          submissions
+          __typename
+        }
+        __typename
+      }
+    }
+  }
+    
+    """
+
+    variables = {"username": "richardsrobinr"}
+
+    response = requests.post(url=url, json={"query": query_two, "variables": variables})
+    leetcode_cleaned_data = {}
+    # print("response status code: ", response.status_code)
+    if response.status_code == 200:
+        print("response : ", response.content)
+        leetcode_json_data = response.json()
+
+        leetcode_cleaned_data["all_count"] = leetcode_json_data["data"]["allQuestionsCount"][0]["count"] # total count
+        leetcode_cleaned_data["easy_count"] = leetcode_json_data["data"]["allQuestionsCount"][1]["count"]
+        leetcode_cleaned_data["medium_count"] = leetcode_json_data["data"]["allQuestionsCount"][2]["count"]
+        leetcode_cleaned_data["hard_count"] = leetcode_json_data["data"]["allQuestionsCount"][3]["count"]
+        leetcode_cleaned_data["all_completed_count"] = leetcode_json_data["data"]["matchedUserStats"]["submitStats"]["acSubmissionNum"][0]["count"]
+        leetcode_cleaned_data["easy_completed_count"] = leetcode_json_data["data"]["matchedUserStats"]["submitStats"]["acSubmissionNum"][1]["count"]
+        leetcode_cleaned_data["medium_completed_count"] = leetcode_json_data["data"]["matchedUserStats"]["submitStats"]["acSubmissionNum"][2]["count"]
+        leetcode_cleaned_data["hard_completed_count"] = leetcode_json_data["data"]["matchedUserStats"]["submitStats"]["acSubmissionNum"][3]["count"]
+        return leetcode_cleaned_data
+    else:
+        return leetcode_cleaned_data
