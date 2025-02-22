@@ -265,7 +265,7 @@ def leetcode_graphql_api():
     leetcode_cleaned_data = {}
     # print("response status code: ", response.status_code)
     if response.status_code == 200:
-        print("response : ", response.content)
+        # print("response : ", response.content)
         leetcode_json_data = response.json()
 
         leetcode_cleaned_data["all_count"] = leetcode_json_data["data"]["allQuestionsCount"][0]["count"] # total count
