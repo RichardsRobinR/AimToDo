@@ -92,14 +92,10 @@ DATABASES = {
     # }
 
     # 'default': dj_database_url.config(
-    #     default= 'postgresql://aim_postgresql_database_user:HIAn7HcPaJohjLzZmoq0LXcKngHDYXKN@dpg-cu2d5urv2p9s738rbp7g-a.singapore-postgres.render.com/aim_postgresql_database',
+    #     default= 'postgresql://aim_postgresql_database2_user:JTVFWM8yeU9ew0fnD3ubGzzujFTqwlx5@dpg-cusu0b3tq21c73b9i3k0-a.singapore-postgres.render.com/aim_postgresql_database2',
     #     conn_max_age=600
     # )
 
-    'default': {
-        'ENGINE': '',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
 }
 
 
