@@ -14,6 +14,6 @@ COPY . /workdir
 
 EXPOSE 8000
 
-RUN /workdir/env/bin/python manage.py migrate
+# RUN /workdir/env/bin/python manage.py migrate
 
 CMD ["/workdir/env/bin/python", "manage.py", "runserver", "0.0.0.0:8000"]
