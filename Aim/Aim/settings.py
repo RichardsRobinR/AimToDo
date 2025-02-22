@@ -95,6 +95,11 @@ DATABASES = {
     #     default= 'postgresql://aim_postgresql_database_user:HIAn7HcPaJohjLzZmoq0LXcKngHDYXKN@dpg-cu2d5urv2p9s738rbp7g-a.singapore-postgres.render.com/aim_postgresql_database',
     #     conn_max_age=600
     # )
+
+    'default': {
+        'ENGINE': '',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 
